@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 255, 255, 255;
+  --background-end-rgb: 245, 245, 245;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors;
+  }
+  
+  .btn-secondary {
+    @apply px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors;
+  }
+  
+  .input-field {
+    @apply w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+  }
+  
+  .card {
+    @apply bg-white rounded-lg shadow-md p-5;
+  }
+
+  .agent-thinking {
+    @apply italic text-gray-600 text-sm;
+  }
+
+  .agent-status {
+    @apply font-medium text-primary-700;
+  }
+}
+
+/* Animation for thinking dots */
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+.thinking-dot {
+  animation: pulse 1.5s infinite;
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  margin: 0 2px;
+  background-color: currentColor;
+}
+
+.thinking-dot:nth-child(2) {
+  animation-delay: 0.3s;
+}
+
+.thinking-dot:nth-child(3) {
+  animation-delay: 0.6s;
+}
