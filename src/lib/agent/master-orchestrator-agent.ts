@@ -217,7 +217,8 @@ export class MasterOrchestratorAgent extends EventEmitter {
           {
             emailType: executionPlan.emailType,
             userProfile: executionPlan.userProfile
-          }
+          },
+          userQuery
         );
         
         const emailDuration = (Date.now() - emailStartTime) / 1000;
@@ -389,9 +390,17 @@ Focus on finding founders, decision makers, and relevant professionals based on 
       return plan;
       
     } catch (error) {
-      console.error('❌ Failed to generate search plan, using fallback');
-      this.statusManager.updateInfo('planning', 'Using fallback search strategy...');
-      return this.createFallbackPlan(userQuery);
+      console.error('❌ Failed to generate search plan, proceeding with basic plan');
+      this.statusManager.updateInfo('planning', 'Plan generation failed, proceeding with available data...');
+      
+      // Create minimal plan from the original query
+      return {
+        intent: 'collaboration',
+        searchQueries: [userQuery], // Just use the raw query
+        emailType: 'collaboration',
+        userProfile: this.extractUserProfile(userQuery),
+        targetCount: 3
+      };
     }
   }
 
@@ -494,76 +503,10 @@ Focus on finding founders, decision makers, and relevant professionals based on 
       valueProposition: 'solutions'
     };
     
-    // Extract name
-    if (query.toLowerCase().includes('kanoj')) {
-      profile.name = 'Kanoj Vora';
-    }
-    
-    // Extract company
-    if (query.toLowerCase().includes('prospectai')) {
-      profile.company = 'ProspectAI.co';
-      profile.valueProposition = 'AI sales automation at scale';
-      profile.industry = 'AI/SaaS';
-    }
-    
-    // Extract case study/achievements
-    if (query.includes('50k') || query.includes('50K')) {
-      profile.caseStudy = 'Recently helped a company generate $50K pipeline with our tool';
-    }
-    
-    // Extract additional context
-    if (query.toLowerCase().includes('ai')) {
-      profile.skills = 'AI, automation, startups';
-    }
+  
     
     return profile;
   }
-
-  private createFallbackPlan(userQuery: string): ExecutionPlan {
-    console.log('⚠️ Using fallback search plan');
-    
-    const baseQueries = [
-      'startup founders contact information',
-      'tech company CEO contact details',
-      'successful startup founders LinkedIn',
-      'venture backed startup founders',
-      'tech entrepreneur contact information',
-      'startup founder email addresses',
-      'emerging tech company leaders'
-    ];
-    
-    // Add location-specific queries if mentioned
-    if (userQuery.toLowerCase().includes('bangalore') || userQuery.toLowerCase().includes('banglore')) {
-      baseQueries.unshift(
-        'Bangalore startup founders contact',
-        'AI SaaS startup founders Bangalore',
-        'tech entrepreneurs Bangalore LinkedIn'
-      );
-    }
-    
-    // Add Y Combinator queries if mentioned
-    if (userQuery.toLowerCase().includes('yc') || userQuery.toLowerCase().includes('combinator')) {
-      baseQueries.unshift(
-        'Y Combinator alumni founders',
-        'YC startup founders contact'
-      );
-    }
-    
-    return {
-      intent: 'sales_outreach',
-      searchQueries: baseQueries.slice(0, 8),
-      emailType: 'sales_outreach',
-      userProfile: {
-        name: 'Tamil M',
-        company: 'zoq agent',
-        valueProposition: 'AI  automation at scale',
-        caseStudy: 'helped dashchat.xyz generate leads',
-        industry: 'AI/SaaS'
-      },
-      targetCount: 3
-    };
-  }
-
   private sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
   }

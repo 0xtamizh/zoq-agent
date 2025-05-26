@@ -42,7 +42,7 @@ export class EmailWritingAgent extends EventEmitter {
     });
   }
 
-  async generatePersonalizedEmails(enrichedData: string, emailParams: any): Promise<string> {
+  async generatePersonalizedEmails(enrichedData: string, emailParams: any, userQuery: string): Promise<string> {
     // System logs for debugging
     console.log('📧 Email Writing Agent: Generating hyper-personalized emails...');
     console.log(`🎯 Email Type: ${emailParams.emailType}`);
@@ -69,6 +69,9 @@ export class EmailWritingAgent extends EventEmitter {
     const startTime = Date.now();
     
     const prompt = `🎯 HYPER-PERSONALIZED COLD EMAIL WRITING MISSION
+
+INITIAL USER QUERY: ${userQuery}, 
+WE HAVE DONE THE INITAL PROCESSING, NOW HAVE TO GENERATE THE MESSAGE BASED ON THE RESULTS
 
 ENRICHED PROFILE DATA:
 ${enrichedData}
@@ -143,7 +146,9 @@ EMAIL TYPE FOCUS:
 TONE: Conversational, confident, specific, human-like
 LENGTH: 3-4 sentences maximum
 GOAL: Get them curious enough to reply
+Use line space fo readability
 
+Focus on what user asked in the inital query to format the email.
 Generate hyper-personalized emails for each person in the enriched data. Use ALL the email signals you have about them.
 
 🚀 RETURN ONLY JSON RESPONSE - NO ADDITIONAL TEXT!`;
